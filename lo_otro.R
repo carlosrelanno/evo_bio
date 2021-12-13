@@ -1,4 +1,5 @@
 library(ggplot2)
+setwd('C:/Users/Carlos/Documents/evo_bio')
 
 rm(list=ls())
 replicates = 1000
@@ -18,7 +19,7 @@ for (bn in bottleneck) {
     prop_mut_matrix = matrix(0, replicates, days/200)
     
     for (r in 1:replicates) {
-      
+      print(r/1000)
       pop = matrix(0, n_loc, N)
       
       mutated_ind = round(runif(1, 1, N))
@@ -47,6 +48,7 @@ for (bn in bottleneck) {
       } 
     }
     #print(tfix)
+    mean_tfix = 0
     mean_tfix = mean(tfix[tfix[,1] != 0])
     p_fix = length(tfix[tfix[,1] != 0])/replicates
     cosos = rbind(cosos, c(N, bn, mean_tfix, p_fix))
@@ -54,13 +56,17 @@ for (bn in bottleneck) {
     #ggplot(data=prop_mut_matrix, aes(x = days/200)
     zeros = rep(c(0), replicates)
     prop_mut_matrix = cbind(zeros, prop_mut_matrix)
+    
+    png(paste('plots/n', N, 'bn', bn, '.png', sep = ''))
     plot(0:(days/200), prop_mut_matrix[1,], type = 'l', ylim = c(0, 1),
-         xlab = 'Days/200', ylab = 'Proportion of mutated',
+         xlab = 'Days/200', ylab = 'Proportion of mutated individuals',
          main = paste('N = ', N, ' and bottleneck = ', bn))
     for (i in 2:replicates) {
       lines(0:(days/200), prop_mut_matrix[i,], col = i, lwd=2.5)
     }
-    abline(v = mean_tfix/50, col = "red")
+    abline(v = mean_tfix/200, lty = 2)
+    text(x = 40, y = 0.5, paste('p fix = ', p_fix, '\n', 'mean t_fix = ', round(mean_tfix, 2)))
+    dev.off()
   }
 }
 
