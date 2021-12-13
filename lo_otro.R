@@ -1,15 +1,19 @@
-library(ggplot2)
+#library(ggplot2)
 setwd('C:/Users/Carlos/Documents/evo_bio')
 
 rm(list=ls())
-replicates = 100
+replicates = 100000
 N_values = c(100, 300, 1000, 3000)
 bottleneck = c(1, 0.5, 0.25)
 days = 10000
 n_loc = 1
 
-cosos = matrix(0,0,4)
+cosos = matrix(0, 0, 4)
 colnames(cosos) = c('N', 'bn', 't_fix', 'p_fix')
+
+all_tfix = matrix(0, replicates, 12)
+colnames(all_tfix) = do.call(paste, c(expand.grid(N_values, bottleneck), list(sep='_')))
+
 for (bn in bottleneck) {
   for (N in N_values) {
     print(c(bn, N))
@@ -19,7 +23,6 @@ for (bn in bottleneck) {
     prop_mut_matrix = matrix(0, replicates, days/200)
     
     for (r in 1:replicates) {
-      print(r/1000)
       pop = matrix(0, n_loc, N)
       
       mutated_ind = round(runif(1, 1, N))
@@ -38,7 +41,8 @@ for (bn in bottleneck) {
         
         if (sum(pop) == N) {
           tfix[r, 1] = day
-          prop_mut_matrix[prop_mut_matrix[r,] == 0] = 1
+          all_tfix[r, paste(N, bn, sep = '_')] = day
+          prop_mut_matrix[prop_mut_matrix[r,] == 0] = 1 # Esto es para que si se fija pongs
           # record day of fixation
           break
         }
@@ -57,7 +61,7 @@ for (bn in bottleneck) {
     zeros = rep(c(0), replicates)
     prop_mut_matrix = cbind(zeros, prop_mut_matrix)
     
-    png(paste('plots/n', N, 'bn', bn, '.png', sep = '')) # Esto es para guardar las imágenes en la carpeta plots. si no va, crea una carpeta plots en donde esté este script. Hay que poner el path al script en la linea 2
+    png(paste('n', N, 'bn', bn, '.png', sep = '')) # Esto es para guardar las imágenes en la carpeta plots. si no va, crea una carpeta plots en donde esté este script. Hay que poner el path al script en la linea 2
     plot(0:(days/200), prop_mut_matrix[1,], type = 'l', ylim = c(0, 1),
          xlab = 'Days/200', ylab = 'Proportion of mutated individuals',
          main = paste('N = ', N, ' and bottleneck = ', bn))
@@ -74,5 +78,7 @@ for (bn in bottleneck) {
 
 print(cosos)
 
-write.table(cosos,file="data.txt", row.names = F, quote = F)
+write.table(cosos,file="cosos.txt", row.names = F, quote = F)
+write.table(all_tfix,file="all_tfix.txt", row.names = F, quote = F)
+
 barplot(cosos[,3], col = c(1, 1, 1, 1, 2, 2, 2, 2 , 3, 3, 3, 3))
