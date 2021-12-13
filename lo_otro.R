@@ -2,7 +2,7 @@ library(ggplot2)
 setwd('C:/Users/Carlos/Documents/evo_bio')
 
 rm(list=ls())
-replicates = 1000
+replicates = 100
 N_values = c(100, 300, 1000, 3000)
 bottleneck = c(1, 0.5, 0.25)
 days = 10000
@@ -53,11 +53,11 @@ for (bn in bottleneck) {
     p_fix = length(tfix[tfix[,1] != 0])/replicates
     cosos = rbind(cosos, c(N, bn, mean_tfix, p_fix))
     
-    #ggplot(data=prop_mut_matrix, aes(x = days/200)
+    # Esto es para que empiecen en 0 las graficas
     zeros = rep(c(0), replicates)
     prop_mut_matrix = cbind(zeros, prop_mut_matrix)
     
-    png(paste('plots/n', N, 'bn', bn, '.png', sep = ''))
+    png(paste('plots/n', N, 'bn', bn, '.png', sep = '')) # Esto es para guardar las imágenes en la carpeta plots. si no va, crea una carpeta plots en donde esté este script. Hay que poner el path al script en la linea 2
     plot(0:(days/200), prop_mut_matrix[1,], type = 'l', ylim = c(0, 1),
          xlab = 'Days/200', ylab = 'Proportion of mutated individuals',
          main = paste('N = ', N, ' and bottleneck = ', bn))
@@ -73,8 +73,6 @@ for (bn in bottleneck) {
 
 
 print(cosos)
-#data = as.data.frame(cosos)
-#data$N = factor(data$N)
-#data$bn = factor(data$bn)
 
-#ggplot(data, aes(x = data$N,y = data$t_fix),fill = data$bn)
+write.table(cosos,file="data.txt", row.names = F, quote = F)
+barplot(cosos[,3], col = c(1, 1, 1, 1, 2, 2, 2, 2 , 3, 3, 3, 3))
