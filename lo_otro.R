@@ -81,4 +81,4 @@ print(cosos)
 write.table(cosos,file="cosos.txt", row.names = F, quote = F)
 write.table(all_tfix,file="all_tfix.txt", row.names = F, quote = F)
 
-barplot(cosos[,3], col = c(1, 1, 1, 1, 2, 2, 2, 2 , 3, 3, 3, 3))
+barplot(cosos[,4], col = c(1, 1, 1, 1, 2, 2, 2, 2 , 3, 3, 3, 3))
