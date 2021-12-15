@@ -1,18 +1,18 @@
 #library(ggplot2)
 setwd('C:/Users/Carlos/Documents/evo_bio')
 
-rm(list=ls())
+rm(list=ls()) #Esto fuera
 replicates = 100000
 N_values = c(100, 300, 1000, 3000)
 bottleneck = c(1, 0.5, 0.25)
 days = 10000
 n_loc = 1
 
-cosos = matrix(0, 0, 4)
+cosos = matrix(0, 0, 4) # nombres sistintos
 colnames(cosos) = c('N', 'bn', 't_fix', 'p_fix')
 
 all_tfix = matrix(0, replicates, 12)
-colnames(all_tfix) = do.call(paste, c(expand.grid(N_values, bottleneck), list(sep='_')))
+colnames(all_tfix) = do.call(paste, c(expand.grid(N_values, bottleneck), list(sep='_'))) # esto es para hacer nombre compuestos rollo n_bn, 3000_0.5
 
 for (bn in bottleneck) {
   for (N in N_values) {
@@ -41,7 +41,7 @@ for (bn in bottleneck) {
         
         if (sum(pop) == N) {
           tfix[r, 1] = day
-          all_tfix[r, paste(N, bn, sep = '_')] = day
+          all_tfix[r, paste(N, bn, sep = '_')] = day 
           prop_mut_matrix[prop_mut_matrix[r,] == 0] = 1 # Esto es para que si se fija pongs
           # record day of fixation
           break
@@ -56,6 +56,7 @@ for (bn in bottleneck) {
     mean_tfix = mean(tfix[tfix[,1] != 0])
     p_fix = length(tfix[tfix[,1] != 0])/replicates
     cosos = rbind(cosos, c(N, bn, mean_tfix, p_fix))
+    #!!! Todo esto de arriba es lo mínimo para que funcione 
     
     # Esto es para que empiecen en 0 las graficas
     zeros = rep(c(0), replicates)
@@ -79,6 +80,7 @@ for (bn in bottleneck) {
 print(cosos)
 
 write.table(cosos,file="cosos.txt", row.names = F, quote = F)
-write.table(all_tfix,file="all_tfix.txt", row.names = F, quote = F)
+write.table(all_tfix,file="all_tfix.txt", row.names = F, quote = F) #solo el nombre del archivo y ya
+
 
 barplot(cosos[,4], col = c(1, 1, 1, 1, 2, 2, 2, 2 , 3, 3, 3, 3))
